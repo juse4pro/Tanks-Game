@@ -1,4 +1,47 @@
-root = true
+﻿[*.cs]
+indent_style = tab
+indent_size = 4
 
-[*]
-charset = utf-8
+
+dotnet_diagnostic.ide0001.severity = warning
+dotnet_diagnostic.ide0004.severity = warning
+dotnet_diagnostic.ide0005.severity = warning
+dotnet_diagnostic.ide0035.severity = warning
+dotnet_diagnostic.ide0058.severity = warning
+dotnet_diagnostic.ide0059.severity = warning
+dotnet_diagnostic.ide0079.severity = warning
+dotnet_diagnostic.ide0080.severity = warning
+dotnet_diagnostic.ide0100.severity = warning
+
+# Don't allow 'var'
+dotnet_diagnostic.ide0007.severity = none
+dotnet_diagnostic.ide0008.severity = error
+
+# "this and Me preferences" from Microsoft - see https://docs.microsoft.com/de-de/dotnet/fundamentals/code-analysis/style-rules/ide0003-ide0009
+# We want to use "this."
+dotnet_diagnostic.ide0003.severity = none
+dotnet_diagnostic.ide0009.severity = error
+
+dotnet_diagnostic.rcs1036.severity = none
+dotnet_diagnostic.rcs1001.severity = warning
+dotnet_diagnostic.rcs1037.severity = warning
+dotnet_diagnostic.rcs1213.severity = none
+
+# Ignore parenthesis style.
+dotnet_diagnostic.rcs1123.severity = none
+
+# Microsoft .NET properties
+csharp_style_var_elsewhere = false:warning
+csharp_style_var_for_built_in_types = false:warning
+csharp_style_var_when_type_is_apparent = false:warning
+dotnet_style_qualification_for_event = true:warning
+dotnet_style_qualification_for_field = true:warning
+dotnet_style_qualification_for_method = true:warning
+dotnet_style_qualification_for_property = true:warning
+
+# Allow `?` annotations even with <Nullable>disable</Nullable>
+dotnet_diagnostic.CS8632.severity = none
+
+# Suppress "Field is never assigned" warnings
+dotnet_diagnostic.CS0649.severity = none
+dotnet_diagnostic.CS8618.severity = none
