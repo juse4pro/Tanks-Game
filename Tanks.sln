@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tanks", "Tanks.csproj", "{1
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server.csproj", "{0A4BDB77-E389-44A0-A055-16AE201D8FEE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "Shared\Shared.csproj", "{7F7388E6-F798-4956-A19F-220EBE82BEDC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 	Debug|Any CPU = Debug|Any CPU
@@ -23,5 +25,11 @@ Global
 		{0A4BDB77-E389-44A0-A055-16AE201D8FEE}.ExportDebug|Any CPU.Build.0 = Debug|Any CPU
 		{0A4BDB77-E389-44A0-A055-16AE201D8FEE}.ExportRelease|Any CPU.ActiveCfg = Debug|Any CPU
 		{0A4BDB77-E389-44A0-A055-16AE201D8FEE}.ExportRelease|Any CPU.Build.0 = Debug|Any CPU
+		{7F7388E6-F798-4956-A19F-220EBE82BEDC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F7388E6-F798-4956-A19F-220EBE82BEDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F7388E6-F798-4956-A19F-220EBE82BEDC}.ExportDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F7388E6-F798-4956-A19F-220EBE82BEDC}.ExportDebug|Any CPU.Build.0 = Debug|Any CPU
+		{7F7388E6-F798-4956-A19F-220EBE82BEDC}.ExportRelease|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F7388E6-F798-4956-A19F-220EBE82BEDC}.ExportRelease|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 EndGlobal

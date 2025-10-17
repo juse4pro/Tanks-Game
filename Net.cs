@@ -4,43 +4,42 @@ using LiteNetLib;
 
 public partial class Net : Node
 {
-    public static Net Instance;
+	public static Net Instance;
 
-    private NetManager _manager;
-
-    
-    public override void _EnterTree()
-    {
-        Instance = this;
-    }
+	private NetManager _manager;
 
 
-    public void Join(string ip, int port)
-    {
-        EventBasedNetListener listener = new();
-        listener.PeerConnectedEvent += OnPeerConnectedEvent;
-        listener.PeerDisconnectedEvent += OnPeerDisconnectedEvent;
-        listener.NetworkReceiveEvent += OnNetworkReceiveEvent;
-        this._manager = new NetManager(listener);
-        this._manager.Start();
-        this._manager.Connect(ip, port, "TankGame");
-    }
+	public override void _EnterTree()
+	{
+		Instance = this;
+	}
 
-    
-    private void OnPeerConnectedEvent(NetPeer peer)
-    {
-        GD.Print($"Connected to {peer.Address}:{peer.Port}");
-    }
-    
-    
-    private void OnPeerDisconnectedEvent(NetPeer peer, DisconnectInfo disconnectInfo)
-    {
-        GD.Print($"Disconnected! ({disconnectInfo.Reason})");
-    }
-    
-    
-    private void OnNetworkReceiveEvent(NetPeer peer, NetPacketReader reader, byte _, DeliveryMethod __)
-    {
-        
-    }
+
+	public void Join(string ip, int port)
+	{
+		EventBasedNetListener listener = new();
+		listener.PeerConnectedEvent += this.OnPeerConnectedEvent;
+		listener.PeerDisconnectedEvent += this.OnPeerDisconnectedEvent;
+		listener.NetworkReceiveEvent += this.OnNetworkReceiveEvent;
+		this._manager = new NetManager(listener);
+		this._manager.Start();
+		this._manager.Connect(ip, port, Shared.Settings.ConnectionKey);
+	}
+
+
+	private void OnPeerConnectedEvent(NetPeer peer)
+	{
+		GD.Print($"Connected to {peer.Address}:{peer.Port}");
+	}
+
+
+	private void OnPeerDisconnectedEvent(NetPeer peer, DisconnectInfo disconnectInfo)
+	{
+		GD.Print($"Disconnected! ({disconnectInfo.Reason})");
+	}
+
+
+	private void OnNetworkReceiveEvent(NetPeer peer, NetPacketReader reader, byte _, DeliveryMethod __)
+	{
+	}
 }
