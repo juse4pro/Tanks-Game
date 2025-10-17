@@ -1,4 +1,7 @@
 ﻿using LiteNetLib;
+using LiteNetLib.Utils;
+using Shared;
+using Shared.Messages.FromServer;
 
 namespace Server;
 
@@ -56,7 +59,8 @@ public class GameServer
 			Peer = peer
 		};
 		this._players.Add(peer, newPlayer);
-		Console.WriteLine($"Player connected {newPlayer}");
+
+		this.BroadcastSystemChatMessage($"Player connected {newPlayer}");
 	}
 
 
@@ -64,12 +68,31 @@ public class GameServer
 	{
 		NetPlayer player = this._players[peer];
 		this._players.Remove(peer);
-		Console.WriteLine($"Player disconnected {player} ({disconnectInfo.Reason})");
+
+		this.BroadcastSystemChatMessage($"Player disconnected {player} ({disconnectInfo.Reason})");
 	}
 
 
 	private void OnNetworkReceiveEvent(NetPeer peer, NetPacketReader reader, byte channel,
 		DeliveryMethod deliveryMethod)
 	{
+	}
+
+
+	public void BroadcastSystemChatMessage(string message)
+	{
+		Console.WriteLine(message);
+		NetDataWriter writer = new();
+		writer.Put((byte)MessageId.Chat);
+		writer.Put(new ChatMessage
+		{
+			Sender = "SYSTEM",
+			Message = message
+		});
+
+		foreach (NetPlayer player in this._players.Values)
+		{
+			player.Peer.Send(writer, DeliveryMethod.ReliableOrdered);
+		}
 	}
 }

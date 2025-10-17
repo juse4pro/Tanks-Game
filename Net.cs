@@ -1,10 +1,18 @@
 using Godot;
 using System;
 using LiteNetLib;
+using Shared;
+using Shared.Messages.FromServer;
 
 public partial class Net : Node
 {
 	public static Net Instance;
+
+	[Signal]
+	public delegate void ConnectionStatusChangedEventHandler(bool wasSuccessful);
+
+	[Signal]
+	public delegate void ChatMessageEventHandler(string sender, string message);
 
 	private NetManager _manager;
 
@@ -37,16 +45,33 @@ public partial class Net : Node
 	private void OnPeerConnectedEvent(NetPeer peer)
 	{
 		GD.Print($"Connected to {peer.Address}:{peer.Port}");
+		this.EmitSignalConnectionStatusChanged(true);
 	}
 
 
 	private void OnPeerDisconnectedEvent(NetPeer peer, DisconnectInfo disconnectInfo)
 	{
 		GD.Print($"Disconnected! ({disconnectInfo.Reason})");
+		this.EmitSignalConnectionStatusChanged(false);
 	}
 
 
 	private void OnNetworkReceiveEvent(NetPeer peer, NetPacketReader reader, byte _, DeliveryMethod __)
 	{
+		MessageId messageId = (MessageId)reader.GetByte();
+		switch (messageId)
+		{
+			case MessageId.Chat:
+
+				ChatMessage message = new();
+				message.Deserialize(reader);
+				this.EmitSignalChatMessage(message.Sender, message.Message);
+				break;
+			default:
+				GD.PushError($"Received unknown message ID {messageId}");
+				break;
+		}
+
+		reader.Recycle();
 	}
 }
