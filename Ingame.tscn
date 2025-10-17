@@ -1,0 +1,26 @@
+[gd_scene format=3 uid="uid://gv2iag7mntlg"]
+
+[node name="Ingame" type="Node"]
+
+[node name="UiLayer" type="CanvasLayer" parent="."]
+
+[node name="Control" type="Control" parent="UiLayer"]
+layout_mode = 3
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UiLayer/Control"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 23.0
+grow_horizontal = 2
+
+[node name="Label" type="Label" parent="UiLayer/Control/VBoxContainer"]
+layout_mode = 2
+text = "Ingame"
+
+[node name="GameLayer" type="CanvasLayer" parent="."]
+
+[node name="World" type="Node2D" parent="GameLayer"]
