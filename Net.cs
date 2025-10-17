@@ -15,8 +15,15 @@ public partial class Net : Node
 	}
 
 
+	public override void _PhysicsProcess(double delta)
+	{
+		this._manager?.PollEvents();
+	}
+
+
 	public void Join(string ip, int port)
 	{
+		GD.Print($"Trying to connect to {ip}:{port}...");
 		EventBasedNetListener listener = new();
 		listener.PeerConnectedEvent += this.OnPeerConnectedEvent;
 		listener.PeerDisconnectedEvent += this.OnPeerDisconnectedEvent;

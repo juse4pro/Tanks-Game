@@ -2,6 +2,6 @@
 
 public static class Settings
 {
-	public static int GamePort;
-	public static string ConnectionKey;
+	public const int GamePort = 42069;
+	public const string ConnectionKey = "TanksGame";
 }

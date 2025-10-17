@@ -1,21 +1,28 @@
-[gd_scene format=3 uid="uid://w65t5rvodews"]
+[gd_scene load_steps=2 format=3 uid="uid://w65t5rvodews"]
 
-[node name="CenterContainer" type="CenterContainer"]
+[ext_resource type="Script" uid="uid://3cvqyiffxrag" path="res://ConnectMenu.cs" id="1_5dovn"]
+
+[node name="ConnectMenu" type="CenterContainer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_5dovn")
 
 [node name="Control" type="VBoxContainer" parent="."]
 layout_mode = 2
 size_flags_horizontal = 4
 
-[node name="TextEdit" type="LineEdit" parent="Control"]
+[node name="IpInput" type="LineEdit" parent="Control"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
+text = "127.0.0.1"
 placeholder_text = "Enter IP"
 
-[node name="Button" type="Button" parent="Control"]
+[node name="ConnectButton" type="Button" parent="Control"]
 layout_mode = 2
 text = "Connect!"
+
+[connection signal="pressed" from="Control/ConnectButton" to="." method="OnConnectButtonPressed"]
