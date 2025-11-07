@@ -1,7 +1,6 @@
 ﻿using LiteNetLib;
 using LiteNetLib.Utils;
 using Shared;
-using Shared.Messages;
 using Shared.Messages.FromServer;
 
 namespace Server;
