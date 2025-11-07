@@ -1,0 +1,25 @@
+[gd_scene load_steps=3 format=3 uid="uid://dlltarjrl4x3j"]
+
+[ext_resource type="Script" uid="uid://c1eypt3mej2ve" path="res://ClientCharacter.cs" id="1_kpjcp"]
+[ext_resource type="Texture2D" uid="uid://c8mv34pnbvd7c" path="res://icon.svg" id="1_xhfnw"]
+
+[node name="Player" type="Node2D"]
+script = ExtResource("1_kpjcp")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_xhfnw")
+
+[node name="NameLabel" type="Label" parent="."]
+unique_name_in_owner = true
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -20.0
+offset_top = -91.0
+offset_right = 20.0
+offset_bottom = -68.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "PlayerName"
