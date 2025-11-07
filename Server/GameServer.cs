@@ -85,7 +85,7 @@ public class GameServer
 		Console.WriteLine(message);
 		NetDataWriter writer = new();
 		writer.Put((byte)MessageId.Chat);
-		writer.PutMessage(new ChatMessage
+		writer.Put(new ChatMessage
 		{
 			Sender = "SYSTEM",
 			Message = message
