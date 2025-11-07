@@ -2,6 +2,7 @@ using Godot;
 using System;
 using LiteNetLib;
 using Shared;
+using Shared.Messages;
 using Shared.Messages.FromServer;
 
 public partial class Net : Node
@@ -63,8 +64,7 @@ public partial class Net : Node
 		{
 			case MessageId.Chat:
 
-				ChatMessage message = new();
-				message.Deserialize(reader);
+				ChatMessage message = reader.GetMessage<ChatMessage>();
 				this.EmitSignalChatMessage(message.Sender, message.Message);
 				break;
 			default:

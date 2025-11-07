@@ -2,7 +2,7 @@
 
 namespace Shared.Messages.FromServer;
 
-public class ChatMessage : INetSerializable
+public class ChatMessage : INetMessage<ChatMessage>
 {
 	public string Sender { set; get; }
 	public string Message { set; get; }
