@@ -1,8 +1,10 @@
 using Godot;
-using System;
 using LiteNetLib;
 using Shared;
 using Shared.Messages.FromServer;
+using Tanks.Messages.FromServer;
+
+namespace Tanks;
 
 public partial class Net : Node
 {
@@ -38,7 +40,7 @@ public partial class Net : Node
 		listener.NetworkReceiveEvent += this.OnNetworkReceiveEvent;
 		this._manager = new NetManager(listener);
 		this._manager.Start();
-		this._manager.Connect(ip, port, Shared.Settings.ConnectionKey);
+		this._manager.Connect(ip, port, Settings.ConnectionKey);
 	}
 
 
@@ -62,10 +64,14 @@ public partial class Net : Node
 		switch (messageId)
 		{
 			case MessageId.Chat:
-
-				ChatMessage message = new();
-				message.Deserialize(reader);
-				this.EmitSignalChatMessage(message.Sender, message.Message);
+				ChatMessage chatMessage = new();
+				chatMessage.Deserialize(reader);
+				this.EmitSignalChatMessage(chatMessage.Sender, chatMessage.Message);
+				break;
+			case MessageId.ActorAppeared:
+				ActorAppeared actorAppearedMessage = new();
+				actorAppearedMessage.Deserialize(reader);
+				actorAppearedMessage.Spawn();
 				break;
 			default:
 				GD.PushError($"Received unknown message ID {messageId}");

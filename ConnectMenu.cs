@@ -5,8 +5,8 @@ public partial class ConnectMenu : Control
 {
 	public override void _Ready()
 	{
-		Net.Instance.Connect(
-			Net.SignalName.ConnectionStatusChanged,
+		Tanks.Net.Instance.Connect(
+			Tanks.Net.SignalName.ConnectionStatusChanged,
 			new Callable(this, nameof(this.OnConnectionStatusChanged))
 		);
 	}
@@ -19,7 +19,7 @@ public partial class ConnectMenu : Control
 		this.GetNode<Button>("%ConnectButton").Disabled = true;
 
 		string serverAddress = ipInput.Text;
-		Net.Instance.Join(serverAddress, Shared.Settings.GamePort);
+		Tanks.Net.Instance.Join(serverAddress, Shared.Settings.GamePort);
 	}
 
 

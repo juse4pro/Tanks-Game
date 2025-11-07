@@ -1,34 +1,21 @@
-﻿using System.Diagnostics;
-using Server;
+using Godot;
 
-Console.WriteLine("Starting server...");
-GameServer server = new GameServer();
-server.Start();
+namespace Server;
 
-
-const int targetTicksPerSeconds = 50;
-TimeSpan targetTimePerTick = TimeSpan.FromSeconds(1.0 / targetTicksPerSeconds);
-
-Stopwatch stopwatch = new();
-
-// Main update loop
-while (true)
+public partial class Program : Node
 {
-	stopwatch.Restart();
-	TimeSpan elapsed = stopwatch.Elapsed;
+	private GameServer _server;
 
-	try
+
+	public override void _EnterTree()
 	{
-		server.Update((float)elapsed.TotalSeconds);
-	}
-	catch (Exception ex)
-	{
-		Console.WriteLine(ex.Message);
+		this._server = new GameServer();
+		this._server.Start();
 	}
 
-	TimeSpan sleepTime = targetTimePerTick - elapsed;
 
-	Thread.Sleep(sleepTime);
+	public override void _Process(double delta)
+	{
+		this._server.Update((float)delta);
+	}
 }
-
-server.Stop();

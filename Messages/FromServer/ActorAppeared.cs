@@ -21,4 +21,10 @@ public class ActorAppeared : ActorAppearedMessage, IServerToClientMessage
 		this.Actor.Position = reader.GetVector();
 		clientActor.Deserialize(reader);
 	}
+
+
+	public void Spawn()
+	{
+		World.Instance.AddToWorld(this.Actor);
+	}
 }

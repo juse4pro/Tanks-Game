@@ -1,5 +1,7 @@
-﻿using LiteNetLib;
+﻿using Godot;
+using LiteNetLib;
 using LiteNetLib.Utils;
+using Server.Messages.ServerToClient;
 using Shared;
 using Shared.Messages.FromServer;
 
@@ -9,7 +11,8 @@ public class GameServer
 {
 	private const int MaxPlayers = 250;
 	private NetManager _manager;
-	private Dictionary<NetPeer, NetPlayer> _players = [];
+	private readonly Dictionary<NetPeer, NetPlayer> _players = [];
+	private readonly ActorCollection _actorCollection = new();
 
 
 	public void Start()
@@ -20,17 +23,14 @@ public class GameServer
 		listener.PeerDisconnectedEvent += this.OnPeerDisconnectedEvent;
 		listener.NetworkReceiveEvent += this.OnNetworkReceiveEvent;
 		this._manager = new NetManager(listener);
-		this._manager.Start(Shared.Settings.GamePort);
-		Console.WriteLine($"Server running on port {this._manager.LocalPort}");
+		this._manager.Start(Settings.GamePort);
+		GD.Print($"Server running on port {this._manager.LocalPort}");
 	}
 
 
 	public void Stop()
 	{
-		foreach (NetPlayer player in this._players.Values)
-		{
-			player.Peer.Disconnect();
-		}
+		foreach (NetPlayer player in this._players.Values) player.Peer.Disconnect();
 
 		this._players.Clear();
 	}
@@ -39,28 +39,66 @@ public class GameServer
 	public void Update(float deltaTime)
 	{
 		this._manager.PollEvents();
+
+		this._actorCollection.Update(deltaTime);
+	}
+
+
+	public void Spawn(SharedActor actor)
+	{
+		this._actorCollection.Add(actor);
+		NetDataWriter writer = new();
+		writer.Put((byte)MessageId.ActorAppeared);
+		ActorAppeared actorAppearedMessage = new()
+		{
+			Actor = actor
+		};
+		actorAppearedMessage.Serialize(writer);
+		this.BroadcastMessage(writer);
 	}
 
 
 	private void OnConnectionRequestEvent(ConnectionRequest request)
 	{
-		Console.WriteLine($"Connection request from {request.RemoteEndPoint}");
+		GD.Print($"Connection request from {request.RemoteEndPoint}");
 		if (this._players.Count >= MaxPlayers)
 			request.Reject();
 
-		request.AcceptIfKey(Shared.Settings.ConnectionKey);
+		request.AcceptIfKey(Settings.ConnectionKey);
 	}
 
 
-	private void OnPeerConnectedEvent(NetPeer peer)
+	private void OnPeerConnectedEvent(NetPeer connectedPeer)
 	{
-		NetPlayer newPlayer = new NetPlayer
+		NetPlayer newPlayer = new()
 		{
-			Peer = peer
+			Peer = connectedPeer
 		};
-		this._players.Add(peer, newPlayer);
+
+		// Sync all existing actors to the connecting player.
+		foreach (SharedActor actor in this._actorCollection.GetAllActors())
+		{
+			NetDataWriter writer = new();
+			writer.Put((byte)MessageId.ActorAppeared);
+			ActorAppeared actorAppearedMessage = new()
+			{
+				Actor = actor
+			};
+			actorAppearedMessage.Serialize(writer);
+			connectedPeer.Send(writer, DeliveryMethod.ReliableOrdered);
+		}
+
+		this._players.Add(connectedPeer, newPlayer);
 
 		this.BroadcastSystemChatMessage($"Player connected {newPlayer}");
+
+		// Creating a new character for the new player.
+		ServerCharacter character = new()
+		{
+			OwningPlayer = newPlayer,
+			Position = new Vector2(GD.RandRange(100, 600), GD.RandRange(100, 600))
+		};
+		this.Spawn(character);
 	}
 
 
@@ -81,7 +119,7 @@ public class GameServer
 
 	public void BroadcastSystemChatMessage(string message)
 	{
-		Console.WriteLine(message);
+		GD.Print(message);
 		NetDataWriter writer = new();
 		writer.Put((byte)MessageId.Chat);
 		writer.Put(new ChatMessage
@@ -90,9 +128,13 @@ public class GameServer
 			Message = message
 		});
 
+		this.BroadcastMessage(writer);
+	}
+
+
+	private void BroadcastMessage(NetDataWriter writer)
+	{
 		foreach (NetPlayer player in this._players.Values)
-		{
 			player.Peer.Send(writer, DeliveryMethod.ReliableOrdered);
-		}
 	}
 }

@@ -4,7 +4,7 @@ using Shared;
 
 namespace Server;
 
-public class ServerCharacter : SharedCharacter, IServerActor
+public partial class ServerCharacter : SharedCharacter, IServerActor
 {
 	public NetPlayer OwningPlayer;
 
