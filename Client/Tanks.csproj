@@ -9,11 +9,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Remove="Server\**"/>
-        <Compile Remove="Shared\**"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <ProjectReference Include="Shared\Shared.csproj"/>
+        <ProjectReference Include="..\Shared\Shared.csproj"/>
     </ItemGroup>
 </Project>

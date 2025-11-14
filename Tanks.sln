@@ -1,6 +1,6 @@
 ﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tanks", "Tanks.csproj", "{1ECF2E85-1575-4964-8913-35753F41D2DB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tanks", "Client\Tanks.csproj", "{1ECF2E85-1575-4964-8913-35753F41D2DB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server.csproj", "{0A4BDB77-E389-44A0-A055-16AE201D8FEE}"
 EndProject
