@@ -1,14 +1,18 @@
 ﻿using Godot;
 using LiteNetLib;
 using LiteNetLib.Utils;
+using Server.Messages.ClientToServer;
 using Server.Messages.ServerToClient;
 using Shared;
+using Shared.Messages.FromClient;
 using Shared.Messages.FromServer;
 
 namespace Server;
 
 public class GameServer
 {
+	public static GameServer Instance;
+
 	private const int MaxPlayers = 250;
 	private NetManager _manager;
 	private readonly Dictionary<NetPeer, NetPlayer> _players = [];
@@ -17,6 +21,7 @@ public class GameServer
 
 	public void Start()
 	{
+		Instance = this;
 		EventBasedNetListener listener = new();
 		listener.ConnectionRequestEvent += this.OnConnectionRequestEvent;
 		listener.PeerConnectedEvent += this.OnPeerConnectedEvent;
@@ -135,6 +140,24 @@ public class GameServer
 	private void OnNetworkReceiveEvent(NetPeer peer, NetPacketReader reader, byte channel,
 		DeliveryMethod deliveryMethod)
 	{
+		MessageId messageId = (MessageId)reader.GetByte();
+		if (!this._players.TryGetValue(peer, out NetPlayer? sendingPlayer))
+			throw new KeyNotFoundException($"Peer {peer.Address}:{peer.Port} unrecognized");
+
+		switch (messageId)
+		{
+			case MessageId.IntentionUpdated:
+				ClientIntentionUpdated clientIntentionUpdated = new();
+				clientIntentionUpdated.Deserialize(reader);
+				if (sendingPlayer.PossessedCharacter is ServerCharacter possessedCharacter)
+					possessedCharacter.CurrentIntention = clientIntentionUpdated.NewIntention;
+				break;
+			default:
+				GD.PushError($"Received unknown message ID {messageId}");
+				break;
+		}
+
+		reader.Recycle();
 	}
 
 
@@ -153,9 +176,9 @@ public class GameServer
 	}
 
 
-	private void BroadcastMessage(NetDataWriter writer)
+	public void BroadcastMessage(NetDataWriter writer, DeliveryMethod deliveryMethod = DeliveryMethod.ReliableOrdered)
 	{
 		foreach (NetPlayer player in this._players.Values)
-			player.Peer.Send(writer, DeliveryMethod.ReliableOrdered);
+			player.Peer.Send(writer, deliveryMethod);
 	}
 }

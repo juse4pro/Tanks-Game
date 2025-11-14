@@ -1,8 +1,8 @@
 ﻿using LiteNetLib.Utils;
 
-namespace Server;
+namespace Tanks;
 
 public interface IClientToServerMessage
 {
-	public void Deserialize(NetDataReader reader);
+	public void Serialize(NetDataWriter writer);
 }

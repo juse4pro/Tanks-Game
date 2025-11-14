@@ -5,5 +5,7 @@ public enum MessageId : byte
 	Unknown = 0,
 	Chat = 1,
 	ActorAppeared = 2,
-	ActorDisappeared = 3
+	ActorDisappeared = 3,
+	IntentionUpdated = 4,
+	ActorUpdated = 5
 }

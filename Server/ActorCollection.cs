@@ -23,7 +23,10 @@ public class ActorCollection
 		this._pendingActors.Clear();
 
 		foreach (SharedActor actor in this._actors)
+		{
+			actor._PhysicsProcess(delta);
 			actor._Process(delta);
+		}
 
 
 		this._actors.RemoveAll(actor =>

@@ -16,6 +16,8 @@ public partial class Net : Node
 	[Signal]
 	public delegate void ChatMessageEventHandler(string sender, string message);
 
+	public bool IsConnectedToServer { private set; get; }
+
 	private NetManager _manager;
 
 
@@ -28,6 +30,12 @@ public partial class Net : Node
 	public override void _PhysicsProcess(double delta)
 	{
 		this._manager?.PollEvents();
+	}
+
+
+	public NetPeer GetServerPeer()
+	{
+		return this._manager.FirstPeer;
 	}
 
 
@@ -47,6 +55,7 @@ public partial class Net : Node
 	private void OnPeerConnectedEvent(NetPeer peer)
 	{
 		GD.Print($"Connected to {peer.Address}:{peer.Port}");
+		this.IsConnectedToServer = true;
 		this.EmitSignalConnectionStatusChanged(true);
 	}
 
@@ -54,6 +63,7 @@ public partial class Net : Node
 	private void OnPeerDisconnectedEvent(NetPeer peer, DisconnectInfo disconnectInfo)
 	{
 		GD.Print($"Disconnected! ({disconnectInfo.Reason})");
+		this.IsConnectedToServer = false;
 		this.EmitSignalConnectionStatusChanged(false);
 	}
 
@@ -78,6 +88,17 @@ public partial class Net : Node
 				actorDisappearedMessage.Deserialize(reader);
 				SharedActor actorToDespawn = SyncService.GetActorById(actorDisappearedMessage.DisappearedSyncId);
 				actorToDespawn.QueueFree();
+				break;
+			case MessageId.ActorUpdated:
+				ActorUpdated actorUpdatedMessage = new();
+				actorUpdatedMessage.Deserialize(reader);
+				
+				if (SyncService.TryGetActorById(actorUpdatedMessage.SyncId, out SharedActor? actor))
+				{
+					actor!.Position = actorUpdatedMessage.Position;
+					actor!.Rotation = actorUpdatedMessage.Rotation;
+				}
+
 				break;
 			default:
 				GD.PushError($"Received unknown message ID {messageId}");
