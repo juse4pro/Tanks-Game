@@ -46,4 +46,4 @@ alignment = 2
 
 [node name="GameLayer" type="CanvasLayer" parent="."]
 
-[node name="World" type="Node2D" parent="GameLayer"]
+[node name="GameWorld" type="Node2D" parent="GameLayer"]

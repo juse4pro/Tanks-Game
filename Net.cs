@@ -73,6 +73,12 @@ public partial class Net : Node
 				actorAppearedMessage.Deserialize(reader);
 				actorAppearedMessage.Spawn();
 				break;
+			case MessageId.ActorDisappeared:
+				ActorDisappeared actorDisappearedMessage = new();
+				actorDisappearedMessage.Deserialize(reader);
+				SharedActor actorToDespawn = SyncService.GetActorById(actorDisappearedMessage.DisappearedSyncId);
+				actorToDespawn.QueueFree();
+				break;
 			default:
 				GD.PushError($"Received unknown message ID {messageId}");
 				break;

@@ -47,6 +47,11 @@ public class GameServer
 	public void Spawn(SharedActor actor)
 	{
 		this._actorCollection.Add(actor);
+
+		actor.SyncId = SyncService.GetNewId();
+		SyncService.RegisterActor(actor);
+		actor.TreeExiting += () => this.OnActorDespawned(actor);
+
 		NetDataWriter writer = new();
 		writer.Put((byte)MessageId.ActorAppeared);
 		ActorAppeared actorAppearedMessage = new()
@@ -54,6 +59,20 @@ public class GameServer
 			Actor = actor
 		};
 		actorAppearedMessage.Serialize(writer);
+		this.BroadcastMessage(writer);
+	}
+
+
+	private void OnActorDespawned(SharedActor actor)
+	{
+		SyncService.UnregisterActor(actor);
+		NetDataWriter writer = new();
+		writer.Put((byte)MessageId.ActorDisappeared);
+		ActorDisappeared actorDisappearedMessage = new()
+		{
+			DisappearedSyncId = actor.SyncId
+		};
+		actorDisappearedMessage.Serialize(writer);
 		this.BroadcastMessage(writer);
 	}
 
@@ -95,9 +114,9 @@ public class GameServer
 		// Creating a new character for the new player.
 		ServerCharacter character = new()
 		{
-			OwningPlayer = newPlayer,
 			Position = new Vector2(GD.RandRange(100, 600), GD.RandRange(100, 600))
 		};
+		newPlayer.PossessCharacter(character);
 		this.Spawn(character);
 	}
 
@@ -106,6 +125,8 @@ public class GameServer
 	{
 		NetPlayer player = this._players[peer];
 		this._players.Remove(peer);
+
+		player.PossessedCharacter?.QueueFree();
 
 		this.BroadcastSystemChatMessage($"Player disconnected {player} ({disconnectInfo.Reason})");
 	}

@@ -1,3 +1,4 @@
+using System;
 using Godot;
 
 namespace Tanks;
@@ -8,7 +9,10 @@ public partial class World : Node
 
 	private Node GetWorldNode()
 	{
-		return this.GetTree().Root.GetNode("/root/Ingame/GameLayer/World");
+		Node world = this.GetTree().CurrentScene.FindChild("GameWorld");
+		if (world == null)
+			throw new Exception("BONK");
+		return world;
 	}
 
 
